@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DistroZik — Vends ta musique, encaisse toi-même</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --nuit: #16183a;
+    --nuit-2: #1f2350;
+    --sable: #f4ecd8;
+    --ocre: #e5a83b;
+    --terre: #c9522f;
+    --palmier: #3f8062;
+    --line: rgba(244,236,216,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--nuit);
+    color:var(--sable);
+    font-family:'Inter', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-weight:700;
+    letter-spacing:-0.01em;
+    line-height:1.05;
+  }
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+  ::selection{background:var(--ocre); color:var(--nuit);}
+
+  /* ===== decorative zellige strip ===== */
+  .zellige{
+    height:14px;
+    width:100%;
+    background:
+      repeating-linear-gradient(45deg, var(--ocre) 0 6px, transparent 6px 12px),
+      repeating-linear-gradient(-45deg, var(--terre) 0 6px, transparent 6px 12px);
+    background-blend-mode: screen;
+    opacity:0.9;
+  }
+
+  /* ===== header ===== */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(22,24,58,0.86);
+    backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 0;
+  }
+  .logo{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-weight:800; font-size:22px; letter-spacing:-0.02em;
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo span{color:var(--ocre);}
+  .nav-links{display:flex; gap:32px; font-size:15px; font-weight:500;}
+  .nav-links a{opacity:0.8; transition:opacity .2s;}
+  .nav-links a:hover{opacity:1;}
+  .nav-cta{
+    background:var(--ocre); color:var(--nuit); font-weight:700;
+    padding:10px 20px; border-radius:100px; font-size:14px;
+    transition:transform .15s;
+  }
+  .nav-cta:hover{transform:translateY(-2px);}
+  .burger{display:none; font-size:26px; background:none; border:none; color:var(--sable); cursor:pointer;}
+
+  /* ===== hero ===== */
+  .hero{
+    padding:96px 0 72px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap:56px;
+    align-items:center;
+  }
+  .kicker{
+    font-size:15px; font-weight:600; color:var(--ocre);
+    margin-bottom:18px;
+  }
+  .hero h1{
+    font-size:clamp(40px, 5.2vw, 68px);
+    margin-bottom:24px;
+  }
+  .hero h1 em{
+    font-style:normal;
+    background:linear-gradient(100deg, var(--ocre), var(--terre));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .hero p.lead{
+    font-size:19px; max-width:520px; opacity:0.86; margin-bottom:34px;
+  }
+  .hero-actions{display:flex; gap:16px; flex-wrap:wrap;}
+  .btn{
+    padding:15px 28px; border-radius:100px; font-weight:700; font-size:15px;
+    display:inline-flex; align-items:center; gap:8px; transition:transform .15s, background .2s;
+    border:1px solid transparent; cursor:pointer;
+  }
+  .btn-primary{background:var(--ocre); color:var(--nuit);}
+  .btn-primary:hover{transform:translateY(-2px);}
+  .btn-ghost{border-color:var(--line); color:var(--sable);}
+  .btn-ghost:hover{border-color:var(--sable);}
+
+  .hero-visual{
+    position:relative; aspect-ratio:1/1.05;
+    border-radius:28px;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(229,168,59,0.35), transparent 55%),
+      radial-gradient(circle at 75% 75%, rgba(201,82,47,0.35), transparent 55%),
+      var(--nuit-2);
+    border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+  .hero-visual .tile-pattern{
+    position:absolute; inset:0; opacity:0.5;
+  }
+  .hero-card{
+    position:relative; z-index:2;
+    width:78%;
+    background:rgba(22,24,58,0.9);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:22px;
+    backdrop-filter:blur(6px);
+  }
+  .avatar-lg{
+    width:100%; aspect-ratio:1/1; border-radius:14px;
+    background:linear-gradient(135deg, var(--terre), var(--ocre));
+    display:flex; align-items:center; justify-content:center;
+    font-size:44px; font-weight:800; color:var(--nuit); margin-bottom:16px;
+    font-family:'Bricolage Grotesque', sans-serif;
+  }
+  .hero-card h3{font-size:20px; margin-bottom:4px;}
+  .badge-route{
+    font-size:13px; opacity:0.75; display:flex; align-items:center; gap:6px; margin-bottom:14px;
+  }
+  .waveform{display:flex; align-items:flex-end; gap:3px; height:28px; margin-bottom:14px;}
+  .waveform span{width:4px; background:var(--ocre); border-radius:2px; opacity:0.85;}
+  .price-row{display:flex; align-items:center; justify-content:space-between;}
+  .price{font-weight:800; font-size:18px; color:var(--ocre);}
+  .mini-play{
+    width:38px; height:38px; border-radius:50%; background:var(--ocre);
+    display:flex; align-items:center; justify-content:center; color:var(--nuit); font-size:14px;
+  }
+
+  /* ===== section shared ===== */
+  section{padding:88px 0;}
+  .section-head{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    gap:24px; margin-bottom:44px; flex-wrap:wrap;
+  }
+  .section-head h2{font-size:clamp(28px,3.4vw,40px); max-width:600px;}
+  .section-head p{opacity:0.7; max-width:380px; font-size:15px;}
+  .border-top{border-top:1px solid var(--line);}
+
+  /* ===== city filter ===== */
+  .filters{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:40px;}
+  .chip{
+    padding:9px 18px; border-radius:100px; border:1px solid var(--line);
+    font-size:14px; font-weight:500; cursor:pointer; transition:.2s; background:transparent; color:var(--sable);
+  }
+  .chip.active, .chip:hover{background:var(--ocre); color:var(--nuit); border-color:var(--ocre);}
+
+  /* ===== artist grid ===== */
+  .artist-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:22px;
+  }
+  .artist-card{
+    background:var(--nuit-2);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:22px;
+    transition:transform .2s, border-color .2s;
+  }
+  .artist-card:hover{transform:translateY(-4px); border-color:var(--ocre);}
+  .card-top{display:flex; gap:14px; align-items:center; margin-bottom:16px;}
+  .avatar-sm{
+    width:56px; height:56px; border-radius:12px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Bricolage Grotesque', sans-serif; font-weight:800; font-size:20px; color:var(--nuit);
+  }
+  .card-top h3{font-size:17px; margin-bottom:3px;}
+  .route{font-size:12.5px; opacity:0.65;}
+  .genre-tag{
+    display:inline-block; font-size:11.5px; font-weight:600; padding:4px 10px;
+    border-radius:100px; background:rgba(244,236,216,0.08); margin-bottom:14px;
+  }
+  .track-name{font-size:14.5px; font-weight:600; margin-bottom:10px; opacity:0.9;}
+
+  /* ===== dj / beatmaker section ===== */
+  .type-toggle{display:flex; gap:10px; margin-bottom:22px;}
+  .type-btn{
+    padding:9px 20px; border-radius:100px; border:1px solid var(--line);
+    font-size:14px; font-weight:600; cursor:pointer; background:transparent; color:var(--sable); transition:.2s;
+  }
+  .type-btn.active{background:var(--palmier); border-color:var(--palmier); color:var(--sable);}
+  #styleFilters{margin-bottom:36px;}
+  .beat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+  .beat-card{
+    background:var(--nuit-2); border:1px solid var(--line); border-radius:20px; padding:24px;
+    transition:transform .2s, border-color .2s;
+    display:flex; flex-direction:column;
+  }
+  .beat-card:hover{transform:translateY(-4px); border-color:var(--palmier);}
+  .beat-card .card-top{margin-bottom:14px;}
+  .beat-meta{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
+  .meta-pill{
+    font-size:11.5px; font-weight:600; padding:4px 10px; border-radius:100px;
+    background:rgba(244,236,216,0.08); opacity:0.85;
+  }
+  .beat-kind{
+    font-size:11px; font-weight:700; text-transform:none; letter-spacing:0.02em;
+    padding:5px 12px; border-radius:100px; margin-bottom:14px; display:inline-flex;
+    align-items:center; gap:6px; width:fit-content;
+  }
+  .beat-kind.mix{background:rgba(63,128,98,0.22); color:#8fd6b3;}
+  .beat-kind.beat{background:rgba(229,168,59,0.2); color:var(--ocre);}
+  .beat-kind .dot-sm{width:6px; height:6px; border-radius:50%; background:currentColor;}
+
+  .license-list{border-top:1px solid var(--line); margin-top:auto; padding-top:16px;}
+  .license-row{
+    display:flex; justify-content:space-between; align-items:center; font-size:13.5px;
+    padding:9px 0; border-bottom:1px solid rgba(244,236,216,0.06);
+  }
+  .license-row:last-of-type{border-bottom:none;}
+  .license-row .license-name{display:flex; align-items:center; gap:8px; opacity:0.85;}
+  .license-row .license-icon{
+    width:20px; height:20px; border-radius:6px; display:flex; align-items:center; justify-content:center;
+    font-size:10px; font-weight:800; flex-shrink:0; color:var(--nuit);
+  }
+  .license-row span.price-tag{font-weight:700; color:var(--ocre);}
+  .buy-row{display:flex; gap:10px; margin-top:16px;}
+  .btn-buy{
+    flex:1; text-align:center; background:var(--palmier); color:var(--sable); font-weight:700;
+    font-size:13.5px; padding:11px; border-radius:10px; cursor:pointer; border:none; transition:.15s;
+  }
+  .btn-buy:hover{filter:brightness(1.1); transform:translateY(-1px);}
+  .mix-price-row{display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:16px;}
+
+  .beat-note{
+    display:flex; gap:14px; align-items:flex-start; margin-top:36px;
+    padding:20px 22px; border-radius:16px; border:1px solid var(--line); background:rgba(244,236,216,0.03);
+  }
+  .beat-note-icon{color:var(--ocre); font-size:18px; line-height:1; margin-top:2px;}
+  .beat-note p{font-size:14px; opacity:0.72; max-width:640px;}
+
+  /* ===== musique de la semaine (palier vedette) ===== */
+  .spotlight-section{
+    background:
+      radial-gradient(circle at 15% 0%, rgba(229,168,59,0.10), transparent 45%),
+      radial-gradient(circle at 85% 100%, rgba(201,82,47,0.10), transparent 45%);
+  }
+  .spotlight-pitch{
+    display:flex; align-items:center; gap:16px;
+    border:1px solid rgba(229,168,59,0.4);
+    background:rgba(229,168,59,0.07);
+    padding:14px 20px; border-radius:14px; margin-bottom:8px;
+    font-size:14px;
+  }
+  .spotlight-pitch strong{color:var(--ocre);}
+  .spotlight-cta{
+    margin-left:auto; flex-shrink:0; background:var(--ocre); color:var(--nuit); font-weight:700;
+    padding:10px 18px; border-radius:100px; font-size:13.5px; white-space:nowrap;
+  }
+  .spotlight-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:36px;}
+  .spotlight-card{
+    position:relative;
+    border-radius:22px; padding:2px;
+    background:linear-gradient(140deg, var(--ocre), var(--terre), var(--ocre));
+  }
+  .spotlight-inner{
+    background:var(--nuit-2); border-radius:20px; padding:24px; height:100%;
+  }
+  .spotlight-rank{
+    position:absolute; top:-14px; left:20px; z-index:2;
+    background:var(--ocre); color:var(--nuit); font-family:'Bricolage Grotesque'; font-weight:800;
+    font-size:13px; padding:5px 14px; border-radius:100px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .spotlight-inner .card-top{margin-top:8px;}
+  .spotlight-inner .price-row{margin-top:14px;}
+
+  /* ===== currency converter ===== */
+  .convert-panel{
+    background:var(--nuit-2); border:1px solid var(--line); border-radius:24px; padding:44px;
+    display:grid; grid-template-columns:0.8fr 1.2fr; gap:48px; align-items:center;
+  }
+  .convert-input label{display:block; font-size:12.5px; font-weight:600; opacity:0.65; margin-bottom:8px;}
+  .convert-input-box{
+    display:flex; align-items:center; border:1px solid var(--line); border-radius:14px; overflow:hidden;
+  }
+  .convert-input-box input{
+    flex:1; background:transparent; border:none; outline:none; color:var(--sable);
+    font-family:'Bricolage Grotesque'; font-size:26px; font-weight:700; padding:16px 18px;
+  }
+  .convert-input-box span{
+    padding:16px 18px; font-size:14px; font-weight:700; opacity:0.6; border-left:1px solid var(--line);
+  }
+  .convert-note{font-size:12.5px; opacity:0.55; margin-top:14px; max-width:280px;}
+  .convert-results{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .convert-result{
+    border:1px solid var(--line); border-radius:16px; padding:20px;
+  }
+  .convert-result .flag{font-size:22px; margin-bottom:10px;}
+  .convert-result .label{font-size:12.5px; opacity:0.6; margin-bottom:6px;}
+  .convert-result .value{font-family:'Bricolage Grotesque'; font-weight:800; font-size:22px; color:var(--ocre);}
+  .convert-result .code{font-size:12px; opacity:0.5; margin-top:4px;}
+
+  /* ===== how it works ===== */
+  .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:0; border-top:1px solid var(--line);}
+  .step{padding:32px 24px 0; border-right:1px solid var(--line);}
+  .step:last-child{border-right:none;}
+  .step-n{font-family:'Bricolage Grotesque'; font-size:36px; font-weight:800; color:var(--ocre); margin-bottom:14px;}
+  .step h3{font-size:17px; margin-bottom:10px;}
+  .step p{font-size:14.5px; opacity:0.72;}
+
+  /* ===== payments ===== */
+  .region-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:22px;
+  }
+  .region-card{
+    background:var(--nuit-2); border:1px solid var(--line); border-radius:18px; padding:22px;
+  }
+  .region-card h4{font-size:16px; margin-bottom:6px;}
+  .region-countries{font-size:12.5px; opacity:0.55; display:block; margin-bottom:16px; line-height:1.4;}
+  .region-card-maroc{border-color:rgba(229,168,59,0.5); background:rgba(229,168,59,0.06);}
+  .region-disclaimer{
+    font-size:13px; opacity:0.6; margin-bottom:40px; max-width:640px;
+    padding-left:18px; border-left:2px solid var(--ocre);
+  }
+  .pay-panel{
+    display:grid; grid-template-columns:1fr 1fr; gap:48px;
+    background:var(--nuit-2); border:1px solid var(--line); border-radius:24px; padding:44px;
+  }
+  .pay-methods{display:flex; flex-wrap:wrap; gap:12px; margin-top:22px;}
+  .pay-pill{
+    padding:11px 16px; border-radius:12px; border:1px solid var(--line);
+    font-size:13.5px; font-weight:600; display:flex; align-items:center; gap:8px;
+  }
+  .dot{width:8px; height:8px; border-radius:50%;}
+
+  .calc-box h3{font-size:17px; margin-bottom:18px;}
+  .calc-box-wide{
+    background:var(--nuit-2); border:1px solid var(--line); border-radius:24px; padding:36px 44px; max-width:640px;
+  }
+  .calc-row{display:flex; align-items:center; gap:12px; margin-bottom:22px;}
+  .calc-row input[type=range]{flex:1; accent-color:var(--ocre);}
+  .calc-amount{font-family:'Bricolage Grotesque'; font-weight:800; font-size:22px; min-width:92px; text-align:right;}
+  .split{display:flex; border-radius:14px; overflow:hidden; height:52px; margin-bottom:16px;}
+  .split-artiste{background:var(--palmier); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; transition:width .25s;}
+  .split-plateforme{background:var(--terre); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; transition:width .25s;}
+  .split-legend{display:flex; justify-content:space-between; font-size:13px; opacity:0.7;}
+
+  /* ===== artist onboarding ===== */
+  .onboard{
+    display:grid; grid-template-columns:0.9fr 1.1fr; gap:56px; align-items:center;
+  }
+  .form-mock{
+    background:var(--nuit-2); border:1px solid var(--line); border-radius:20px; padding:30px;
+  }
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:12.5px; font-weight:600; opacity:0.65; margin-bottom:6px;}
+  .field .fake-input{
+    border:1px dashed var(--line); border-radius:10px; padding:12px 14px; font-size:14px; opacity:0.55;
+  }
+  .field .fake-input.upload{display:flex; align-items:center; justify-content:space-between;}
+  .field-row{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+
+  /* ===== footer ===== */
+  footer{border-top:1px solid var(--line); padding:56px 0 34px;}
+  .foot-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:40px; margin-bottom:40px;}
+  footer h4{font-size:14px; margin-bottom:14px; opacity:0.9;}
+  footer ul{list-style:none;}
+  footer li{margin-bottom:9px; font-size:14px; opacity:0.65;}
+  .foot-bottom{display:flex; justify-content:space-between; font-size:13px; opacity:0.5; flex-wrap:wrap; gap:10px;}
+
+  @media (max-width:880px){
+    .nav-links, .nav-cta{display:none;}
+    .burger{display:block;}
+    .hero-grid, .onboard, .pay-panel, .convert-panel{grid-template-columns:1fr;}
+    .artist-grid, .beat-grid, .spotlight-grid{grid-template-columns:repeat(2,1fr);}
+    .region-grid{grid-template-columns:repeat(2,1fr);}
+    .steps{grid-template-columns:repeat(2,1fr);}
+    .step{border-right:none; border-bottom:1px solid var(--line); padding-bottom:24px;}
+    .foot-grid{grid-template-columns:1fr;}
+  }
+  @media (max-width:560px){
+    .artist-grid, .beat-grid, .spotlight-grid, .region-grid, .convert-results{grid-template-columns:1fr;}
+    .steps{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="zellige"></div>
+
+<header>
+  <div class="wrap nav">
+    <div class="logo">Distro<span>Zik</span></div>
+    <nav class="nav-links">
+      <a href="#semaine">Musique de la semaine</a>
+      <a href="#decouvrir">Découvrir</a>
+      <a href="#beatmakers">DJs & Beatmakers</a>
+      <a href="#comment">Comment ça marche</a>
+      <a href="#paiements">Paiements</a>
+      <a href="#vendre">Vendre ta musique</a>
+    </nav>
+    <a href="#vendre" class="nav-cta">Devenir artiste</a>
+    <button class="burger">☰</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker">Fait au Maroc, pour la diaspora subsaharienne</div>
+      <h1>Ta musique.<br>Ta ville.<br><em>Ton argent.</em></h1>
+      <p class="lead">DistroZik est la plateforme où les artistes subsahariens installés au Maroc mettent en ligne leurs titres, affichent leur ville d'origine et leur ville d'accueil, et encaissent directement l'argent de chaque vente.</p>
+      <div class="hero-actions">
+        <a href="#decouvrir" class="btn btn-primary">Écouter les sorties</a>
+        <a href="#vendre" class="btn btn-ghost">Vendre ma musique →</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card">
+        <div class="avatar-lg">AN</div>
+        <h3>Aïcha N'Diaye</h3>
+        <div class="badge-route">🇸🇳 Dakar → 📍 Tanger</div>
+        <div class="waveform" id="heroWave"></div>
+        <div class="price-row">
+          <span class="price">15 MAD</span>
+          <div class="mini-play">▶</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="semaine" class="border-top spotlight-section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Musique de la semaine</h2>
+      <p>Chaque semaine, 3 emplacements mettent un artiste, un DJ et un beatmaker devant tous les visiteurs de DistroZik.</p>
+    </div>
+    <div class="spotlight-pitch">
+      <span>📌 <strong>250 DH</strong> pour être en vedette pendant 7 jours, tous profils confondus (artiste, DJ ou beatmaker).</span>
+      <a href="#vendre" class="spotlight-cta">Réserver ma place</a>
+    </div>
+
+    <div class="spotlight-grid">
+      <div class="spotlight-card">
+        <div class="spotlight-rank">★ Vedette</div>
+        <div class="spotlight-inner">
+          <div class="card-top">
+            <div class="avatar-sm" style="background:linear-gradient(135deg,#c9522f,#e5a83b);">BO</div>
+            <div>
+              <h3>Blessing Okafor</h3>
+              <div class="route">🇳🇬 Lagos → 📍 Rabat</div>
+            </div>
+          </div>
+          <span class="genre-tag">Afrobeats</span>
+          <div class="track-name">Sunlight</div>
+          <div class="waveform" id="spotWave1">
+          </div>
+          <div class="price-row">
+            <span class="price">18 MAD</span>
+            <div class="mini-play">▶</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="spotlight-card">
+        <div class="spotlight-rank">★ Vedette</div>
+        <div class="spotlight-inner">
+          <div class="card-top">
+            <div class="avatar-sm" style="background:linear-gradient(135deg,#3f8062,#e5a83b);">NP</div>
+            <div>
+              <h3>DJ Naledi P.</h3>
+              <div class="route">🇿🇦 Johannesburg → 📍 Agadir</div>
+            </div>
+          </div>
+          <span class="genre-tag">Amapiano · Mix DJ</span>
+          <div class="track-name">Atlas Log Drum Mix</div>
+          <div class="waveform" id="spotWave2">
+          </div>
+          <div class="price-row">
+            <span class="price">22 MAD</span>
+            <div class="mini-play">▶</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="spotlight-card">
+        <div class="spotlight-rank">★ Vedette</div>
+        <div class="spotlight-inner">
+          <div class="card-top">
+            <div class="avatar-sm" style="background:linear-gradient(135deg,#c9522f,#3f8062);">TB</div>
+            <div>
+              <h3>Thami Beats</h3>
+              <div class="route">🇿🇦 Pretoria → 📍 Tétouan</div>
+            </div>
+          </div>
+          <span class="genre-tag">Amapiano · Instrumentale</span>
+          <div class="track-name">Medina Groove</div>
+          <div class="waveform" id="spotWave3">
+          </div>
+          <div class="price-row">
+            <span class="price">Dès 11 MAD</span>
+            <div class="mini-play">▶</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="decouvrir" class="border-top">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Des sons du Sahel aux ruelles de Tanger</h2>
+      <p>Filtre par ville d'accueil au Maroc et découvre les artistes installés près de chez toi.</p>
+    </div>
+    <div class="filters" id="cityFilters">
+      <button class="chip active" data-city="all">Toutes les villes</button>
+      <button class="chip" data-city="Tanger">Tanger</button>
+      <button class="chip" data-city="Casablanca">Casablanca</button>
+      <button class="chip" data-city="Rabat">Rabat</button>
+      <button class="chip" data-city="Marrakech">Marrakech</button>
+      <button class="chip" data-city="Fès">Fès</button>
+      <button class="chip" data-city="Agadir">Agadir</button>
+      <button class="chip" data-city="Tétouan">Tétouan</button>
+      <button class="chip" data-city="Oujda">Oujda</button>
+    </div>
+
+    <div class="artist-grid" id="artistGrid">
+      <!-- cards injected by JS -->
+    </div>
+  </div>
+</section>
+
+<section id="beatmakers" class="border-top beat-section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Mix DJ & instrumentales, vendus comme il se doit</h2>
+      <p>Un mix se vend en un clic. Une instrumentale se vend en licence, avec les droits qui vont avec. DistroZik gère les deux, proprement.</p>
+    </div>
+
+    <div class="type-toggle" id="typeToggle">
+      <button class="type-btn active" data-type="all">Tout voir</button>
+      <button class="type-btn" data-type="mix">Mix DJ</button>
+      <button class="type-btn" data-type="beat">Instrumentales</button>
+    </div>
+
+    <div class="filters" id="styleFilters">
+      <button class="chip active" data-style="all">Tous les styles</button>
+      <button class="chip" data-style="Afro-House">Afro-House</button>
+      <button class="chip" data-style="Afrobeats">Afrobeats</button>
+      <button class="chip" data-style="Coupé-Décalé">Coupé-Décalé</button>
+      <button class="chip" data-style="Amapiano">Amapiano</button>
+      <button class="chip" data-style="Ndombolo">Ndombolo</button>
+      <button class="chip" data-style="Trap Afro">Trap Afro</button>
+    </div>
+
+    <div class="beat-grid" id="beatGrid">
+      <!-- cards injected by JS -->
+    </div>
+
+    <div class="beat-note">
+      <div class="beat-note-icon">◐</div>
+      <p>Sur une instrumentale, l'acheteur choisit sa licence au moment du paiement. L'exclusivité retire automatiquement le beat du catalogue pour tous les autres visiteurs.</p>
+    </div>
+  </div>
+</section>
+
+<section id="comment" class="border-top">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Comment ça marche pour un artiste</h2>
+      <p>Quatre étapes, aucune démarche technique.</p>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">01</div>
+        <h3>Crée ton profil</h3>
+        <p>Ta photo, ton nom d'artiste, ta ville d'origine et ta ville au Maroc.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">02</div>
+        <h3>Mets en ligne tes titres</h3>
+        <p>Importe tes fichiers audio, ta pochette, et fixe le prix que tu veux.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">03</div>
+        <h3>Partage ton lien</h3>
+        <p>Ta page DistroZik se partage sur WhatsApp, TikTok et Instagram.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">04</div>
+        <h3>Encaisse tes ventes</h3>
+        <p>85% de chaque vente arrive sur ton moyen de paiement, sans attendre.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="paiements" class="border-top">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Tous les moyens de paiement mobiles d'Afrique subsaharienne</h2>
+      <p>DistroZik prélève une commission fixe et transparente de 15% sur chaque vente. Chaque région a ses opérateurs : voici ceux que tes fans retrouveront selon leur pays.</p>
+    </div>
+
+    <div class="region-grid">
+      <div class="region-card">
+        <h4>Afrique de l'Ouest</h4>
+        <span class="region-countries">Sénégal · Côte d'Ivoire · Mali · Bénin · Togo · Burkina Faso · Niger</span>
+        <div class="pay-methods">
+          <span class="pay-pill"><span class="dot" style="background:#ff6600;"></span>Orange Money</span>
+          <span class="pay-pill"><span class="dot" style="background:#1dc9a4;"></span>Wave</span>
+          <span class="pay-pill"><span class="dot" style="background:#ffcc00;"></span>MTN MoMo</span>
+          <span class="pay-pill"><span class="dot" style="background:#0091d4;"></span>Moov Money</span>
+          <span class="pay-pill"><span class="dot" style="background:#e63946;"></span>Free Money</span>
+        </div>
+      </div>
+
+      <div class="region-card">
+        <h4>Afrique centrale</h4>
+        <span class="region-countries">Cameroun · RDC · Gabon · Congo · Tchad · RCA</span>
+        <div class="pay-methods">
+          <span class="pay-pill"><span class="dot" style="background:#e5004c;"></span>Airtel Money</span>
+          <span class="pay-pill"><span class="dot" style="background:#ff6600;"></span>Orange Money</span>
+          <span class="pay-pill"><span class="dot" style="background:#ffcc00;"></span>MTN MoMo</span>
+          <span class="pay-pill"><span class="dot" style="background:#3f8062;"></span>M-Pesa (RDC)</span>
+        </div>
+      </div>
+
+      <div class="region-card">
+        <h4>Afrique de l'Est</h4>
+        <span class="region-countries">Kenya · Tanzanie · Ouganda · Rwanda</span>
+        <div class="pay-methods">
+          <span class="pay-pill"><span class="dot" style="background:#3f8062;"></span>M-Pesa</span>
+          <span class="pay-pill"><span class="dot" style="background:#e5004c;"></span>Airtel Money</span>
+          <span class="pay-pill"><span class="dot" style="background:#ffcc00;"></span>MTN MoMo</span>
+          <span class="pay-pill"><span class="dot" style="background:#00a3e0;"></span>Mixx by Yas</span>
+        </div>
+      </div>
+
+      <div class="region-card">
+        <h4>Afrique australe</h4>
+        <span class="region-countries">Zimbabwe · Zambie · Malawi · Mozambique</span>
+        <div class="pay-methods">
+          <span class="pay-pill"><span class="dot" style="background:#e5004c;"></span>Airtel Money</span>
+          <span class="pay-pill"><span class="dot" style="background:#7c3aed;"></span>EcoCash</span>
+          <span class="pay-pill"><span class="dot" style="background:#3f8062;"></span>M-Pesa (Mozambique)</span>
+        </div>
+      </div>
+
+      <div class="region-card region-card-maroc">
+        <h4>Encaissement au Maroc</h4>
+        <span class="region-countries">Pour toi et les artistes basés au Maroc</span>
+        <div class="pay-methods">
+          <span class="pay-pill"><span class="dot" style="background:#ff6600;"></span>Orange Money Maroc</span>
+          <span class="pay-pill"><span class="dot" style="background:var(--ocre);"></span>CIH / Attijari / BMCE</span>
+          <span class="pay-pill"><span class="dot" style="background:var(--sable);"></span>Carte bancaire</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="region-disclaimer">Airtel Money n'est pas disponible au Maroc : il sert à recevoir les paiements de tes fans dans les pays où il existe, pas à retirer l'argent une fois au Maroc.</p>
+
+    <div class="calc-box calc-box-wide">
+      <h3>Simulateur de commission</h3>
+      <div class="calc-row">
+        <input type="range" id="priceSlider" min="5" max="100" value="20" step="1">
+        <div class="calc-amount"><span id="priceLabel">20</span> MAD</div>
+      </div>
+      <div class="split">
+        <div class="split-artiste" id="splitArtiste" style="width:85%;">85%</div>
+        <div class="split-plateforme" id="splitPlateforme" style="width:15%;">15%</div>
+      </div>
+      <div class="split-legend">
+        <span>Toi, l'artiste : <strong id="artisteAmount">17 MAD</strong></span>
+        <span>DistroZik : <strong id="plateformeAmount">3 MAD</strong></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="conversion" class="border-top">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Combien ça représente chez toi ?</h2>
+      <p>Convertis tes gains ou le prix d'un titre en dirham marocain (MAD), en franc CFA (FCFA) et en franc congolais (CDF).</p>
+    </div>
+    <div class="convert-panel">
+      <div class="convert-input">
+        <label>Montant en dirhams marocains</label>
+        <div class="convert-input-box">
+          <input type="number" id="convertInput" value="250" min="0" step="1">
+          <span>MAD</span>
+        </div>
+        <p class="convert-note">Taux indicatifs, à titre d'estimation — le taux réel varie selon le jour et l'opérateur de transfert utilisé.</p>
+      </div>
+      <div class="convert-results">
+        <div class="convert-result">
+          <div class="flag">🌍</div>
+          <div class="label">Franc CFA (zone Afrique de l'Ouest)</div>
+          <div class="value" id="convertXOF">15 250</div>
+          <div class="code">XOF</div>
+        </div>
+        <div class="convert-result">
+          <div class="flag">🇨🇩</div>
+          <div class="label">Franc congolais</div>
+          <div class="value" id="convertCDF">60 000</div>
+          <div class="code">CDF</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="vendre" class="border-top">
+  <div class="wrap">
+    <div class="onboard">
+      <div>
+        <div class="kicker">Pour les artistes</div>
+        <h2 style="font-size:clamp(26px,3.2vw,36px); margin-bottom:18px;">Ton profil, en moins de 5 minutes</h2>
+        <p style="opacity:0.75; font-size:15.5px; margin-bottom:24px; max-width:440px;">Artiste, DJ ou beatmaker : tu gardes le contrôle total. C'est toi qui mets ta photo, tes morceaux, tes mixtapes ou tes instrus, et tu fixes tes prix — y compris tes licences MP3, WAV ou exclusivité si tu vends des beats. DistroZik ne touche jamais à ta création.</p>
+        <a href="#" class="btn btn-primary">Créer mon compte artiste</a>
+      </div>
+      <div class="form-mock">
+        <div class="field">
+          <label>Type de compte</label>
+          <div class="fake-input">Artiste · DJ (mixtapes) · Beatmaker (instrus)</div>
+        </div>
+        <div class="field">
+          <label>Nom d'artiste</label>
+          <div class="fake-input">Ex : Junior Mbala</div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Ville d'origine</label>
+            <div class="fake-input">Ex : Kinshasa, RDC</div>
+          </div>
+          <div class="field">
+            <label>Ville au Maroc</label>
+            <div class="fake-input">Ex : Fès</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Photo de profil</label>
+          <div class="fake-input upload"><span>photo.jpg</span><span>Importer ⤴</span></div>
+        </div>
+        <div class="field">
+          <label>Fichier audio</label>
+          <div class="fake-input upload"><span>titre.mp3</span><span>Importer ⤴</span></div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Prix du titre</label>
+            <div class="fake-input">14 MAD</div>
+          </div>
+          <div class="field">
+            <label>Moyen d'encaissement</label>
+            <div class="fake-input">Airtel Money</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo" style="margin-bottom:14px;">Distro<span>Zik</span></div>
+        <p style="opacity:0.6; font-size:14px; max-width:280px;">La plateforme musicale des artistes subsahariens du Maroc, ville par ville.</p>
+      </div>
+      <div>
+        <h4>Plateforme</h4>
+        <ul>
+          <li><a href="#decouvrir">Découvrir</a></li>
+          <li><a href="#comment">Comment ça marche</a></li>
+          <li><a href="#paiements">Paiements</a></li>
+          <li><a href="#vendre">Devenir artiste</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li>contact@distrozik.ma</li>
+          <li>Casablanca, Maroc</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 DistroZik</span>
+      <span>Commission plateforme : 15% par vente</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---- artist data ----
+  const artists = [
+    {name:"Aïcha N'Diaye", origin:"🇸🇳 Dakar", city:"Tanger", genre:"Afro-Soul", track:"Teranga", price:15, initials:"AN"},
+    {name:"Kwame Touré", origin:"🇲🇱 Bamako", city:"Casablanca", genre:"Coupé-Décalé", track:"Ndeye", price:12, initials:"KT"},
+    {name:"Blessing Okafor", origin:"🇳🇬 Lagos", city:"Rabat", genre:"Afrobeats", track:"Sunlight", price:18, initials:"BO"},
+    {name:"Fatou Camara", origin:"🇬🇳 Conakry", city:"Marrakech", genre:"Mbalax", track:"Baraka", price:10, initials:"FC"},
+    {name:"Junior Mbala", origin:"🇨🇩 Kinshasa", city:"Fès", genre:"Rumba", track:"Liberté", price:14, initials:"JM"},
+    {name:"Aminata Diallo", origin:"🇨🇮 Abidjan", city:"Agadir", genre:"Zouglou", track:"Yako", price:13, initials:"AD"},
+    {name:"Samuel Nkemayang", origin:"🇨🇲 Douala", city:"Tétouan", genre:"Bikutsi", track:"Mboa", price:16, initials:"SN"},
+    {name:"Ramatoulaye Sow", origin:"🇸🇳 Saint-Louis", city:"Oujda", genre:"Afro-Pop", track:"Diamono", price:11, initials:"RS"},
+    {name:"Emmanuel Kouassi", origin:"🇨🇮 Bouaké", city:"Tanger", genre:"Zouglou", track:"Gnamlè", price:12, initials:"EK"},
+  ];
+
+  const gradients = [
+    "linear-gradient(135deg,#c9522f,#e5a83b)",
+    "linear-gradient(135deg,#3f8062,#e5a83b)",
+    "linear-gradient(135deg,#c9522f,#3f8062)",
+    "linear-gradient(135deg,#e5a83b,#f4ecd8)",
+  ];
+
+  function bars(n, min, max){
+    let out = "";
+    for(let i=0;i<n;i++){
+      const h = Math.floor(Math.random()*(max-min))+min;
+      out += `<span style="height:${h}px;"></span>`;
+    }
+    return out;
+  }
+  document.getElementById('heroWave').innerHTML = bars(24, 6, 28);
+  document.getElementById('spotWave1').innerHTML = bars(18, 5, 24);
+  document.getElementById('spotWave2').innerHTML = bars(18, 5, 24);
+  document.getElementById('spotWave3').innerHTML = bars(18, 5, 24);
+
+  const grid = document.getElementById('artistGrid');
+
+  function render(city){
+    grid.innerHTML = "";
+    artists
+      .filter(a => city === "all" || a.city === city)
+      .forEach((a, i) => {
+        const card = document.createElement('div');
+        card.className = "artist-card";
+        card.innerHTML = `
+          <div class="card-top">
+            <div class="avatar-sm" style="background:${gradients[i % gradients.length]}">${a.initials}</div>
+            <div>
+              <h3>${a.name}</h3>
+              <div class="route">${a.origin} → 📍 ${a.city}</div>
+            </div>
+          </div>
+          <span class="genre-tag">${a.genre}</span>
+          <div class="track-name">${a.track}</div>
+          <div class="waveform">${bars(18, 5, 22)}</div>
+          <div class="price-row">
+            <span class="price">${a.price} MAD</span>
+            <div class="mini-play">▶</div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+  }
+  render("all");
+
+  document.querySelectorAll('#cityFilters .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#cityFilters .chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      render(chip.dataset.city);
+    });
+  });
+
+  // ---- Mix DJ & beatmakers ----
+  const beatCatalog = [
+    {type:"mix", name:"DJ Sory Bamba", origin:"🇲🇱 Bamako", city:"Casablanca", style:"Afro-House", track:"Sahel Sunset Mix", duration:"58 min", price:20, initials:"SB"},
+    {type:"mix", name:"DJ Aïsha K.", origin:"🇸🇳 Dakar", city:"Tanger", style:"Afrobeats", track:"Détroit Session Vol. 3", duration:"46 min", price:15, initials:"AK"},
+    {type:"mix", name:"DJ Ibra One", origin:"🇨🇮 Abidjan", city:"Rabat", style:"Coupé-Décalé", track:"Ambiance Rabat Live", duration:"70 min", price:25, initials:"IO"},
+    {type:"mix", name:"DJ Naledi P.", origin:"🇿🇦 Johannesburg", city:"Agadir", style:"Amapiano", track:"Atlas Log Drum Mix", duration:"52 min", price:22, initials:"NP"},
+    {type:"beat", name:"Beatmaker Sango", origin:"🇨🇲 Douala", city:"Marrakech", style:"Afrobeats", track:"Zellige Nights", bpm:"104 BPM", key:"C# min", price:10, initials:"SG"},
+    {type:"beat", name:"Wiz Kongo", origin:"🇨🇩 Kinshasa", city:"Fès", style:"Ndombolo", track:"Fès La Nuit", bpm:"128 BPM", key:"A min", price:12, initials:"WK"},
+    {type:"beat", name:"Beatz by Nael", origin:"🇬🇳 Conakry", city:"Agadir", style:"Trap Afro", track:"Atlas Drift", bpm:"140 BPM", key:"F min", price:14, initials:"BN"},
+    {type:"beat", name:"Thami Beats", origin:"🇿🇦 Pretoria", city:"Tétouan", style:"Amapiano", track:"Medina Groove", bpm:"112 BPM", key:"G min", price:11, initials:"TB"},
+  ];
+
+  const beatGrid = document.getElementById('beatGrid');
+  let activeType = "all";
+  let activeStyle = "all";
+
+  function renderBeats(){
+    beatGrid.innerHTML = "";
+    beatCatalog
+      .filter(b => activeType === "all" || b.type === activeType)
+      .filter(b => activeStyle === "all" || b.style === activeStyle)
+      .forEach((b, i) => {
+        const card = document.createElement('div');
+        card.className = "beat-card";
+        const kindLabel = b.type === "mix" ? "Mix DJ" : "Instrumentale";
+        const kindClass = b.type === "mix" ? "mix" : "beat";
+        let bodyHtml = "";
+        if(b.type === "mix"){
+          bodyHtml = `
+            <div class="mix-price-row">
+              <span class="price">${b.price} MAD</span>
+              <div class="mini-play">▶</div>
+            </div>
+            <div class="buy-row">
+              <button class="btn-buy">Acheter le mix</button>
+            </div>
+          `;
+        } else {
+          const mp3 = b.price;
+          const wav = mp3 + 15;
+          const excl = mp3 + 90;
+          bodyHtml = `
+            <div class="license-list">
+              <div class="license-row">
+                <span class="license-name"><span class="license-icon" style="background:var(--sable);">MP3</span>Licence MP3</span>
+                <span class="price-tag">${mp3} MAD</span>
+              </div>
+              <div class="license-row">
+                <span class="license-name"><span class="license-icon" style="background:var(--ocre);">WAV</span>WAV + trackout</span>
+                <span class="price-tag">${wav} MAD</span>
+              </div>
+              <div class="license-row">
+                <span class="license-name"><span class="license-icon" style="background:var(--terre);">★</span>Exclusivité</span>
+                <span class="price-tag">${excl} MAD</span>
+              </div>
+            </div>
+            <div class="buy-row">
+              <button class="btn-buy">Choisir une licence</button>
+            </div>
+          `;
+        }
+        card.innerHTML = `
+          <span class="beat-kind ${kindClass}"><span class="dot-sm"></span>${kindLabel}</span>
+          <div class="card-top">
+            <div class="avatar-sm" style="background:${gradients[i % gradients.length]}">${b.initials}</div>
+            <div>
+              <h3>${b.name}</h3>
+              <div class="route">${b.origin} → 📍 ${b.city}</div>
+            </div>
+          </div>
+          <span class="genre-tag">${b.style}</span>
+          <div class="track-name">${b.track}</div>
+          <div class="beat-meta">
+            ${b.type === "mix" ? `<span class="meta-pill">${b.duration}</span>` : `<span class="meta-pill">${b.bpm}</span><span class="meta-pill">${b.key}</span>`}
+          </div>
+          <div class="waveform">${bars(16, 5, 22)}</div>
+          ${bodyHtml}
+        `;
+        beatGrid.appendChild(card);
+      });
+  }
+  renderBeats();
+
+  document.querySelectorAll('#typeToggle .type-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#typeToggle .type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeType = btn.dataset.type;
+      renderBeats();
+    });
+  });
+
+  document.querySelectorAll('#styleFilters .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#styleFilters .chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      activeStyle = chip.dataset.style;
+      renderBeats();
+    });
+  });
+
+  // ---- commission calculator ----
+  const slider = document.getElementById('priceSlider');
+  const priceLabel = document.getElementById('priceLabel');
+  const artisteAmount = document.getElementById('artisteAmount');
+  const plateformeAmount = document.getElementById('plateformeAmount');
+  const splitArtiste = document.getElementById('splitArtiste');
+  const splitPlateforme = document.getElementById('splitPlateforme');
+
+  function updateCalc(){
+    const val = parseInt(slider.value, 10);
+    priceLabel.textContent = val;
+    const plateforme = Math.round(val * 0.15 * 100) / 100;
+    const artiste = Math.round((val - plateforme) * 100) / 100;
+    artisteAmount.textContent = artiste + " MAD";
+    plateformeAmount.textContent = plateforme + " MAD";
+  }
+  slider.addEventListener('input', updateCalc);
+  updateCalc();
+
+  // ---- currency converter ----
+  const RATE_XOF = 61.4;   // 1 MAD ≈ 61.4 FCFA (indicatif)
+  const RATE_CDF = 240;    // 1 MAD ≈ 240 CDF (indicatif, très volatile)
+
+  const convertInput = document.getElementById('convertInput');
+  const convertXOF = document.getElementById('convertXOF');
+  const convertCDF = document.getElementById('convertCDF');
+
+  function formatNumber(n){
+    return Math.round(n).toLocaleString('fr-FR');
+  }
+
+  function updateConvert(){
+    const mad = parseFloat(convertInput.value) || 0;
+    convertXOF.textContent = formatNumber(mad * RATE_XOF);
+    convertCDF.textContent = formatNumber(mad * RATE_CDF);
+  }
+  convertInput.addEventListener('input', updateConvert);
+  updateConvert();
+</script>
+
+</body>
+</html>
